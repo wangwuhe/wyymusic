@@ -178,7 +178,6 @@ export default {
         offset:0
       }
     }).then(res=>{
-      console.log(res.data)
       this.total=res.data.total;
       this.Comments=res.data.comments;
     })
@@ -195,7 +194,6 @@ export default {
           offset:(this.page-1)*10
         }
       }).then(res=>{
-        console.log(res.data)
         this.total=res.data.total;
         this.Comments=res.data.comments;
       })

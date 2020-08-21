@@ -69,6 +69,15 @@
         </div>
       </el-tab-pane>
     </el-tabs>
+    <el-pagination
+      @current-change="handleCurrentChange"
+      background
+      layout="prev, pager, next"
+      :total="count"
+      :current-page="page"
+      :page-size="limit"
+    >
+    </el-pagination>
   </div>
 </template>
 
@@ -78,11 +87,13 @@ export default {
   name: 'result',
   data() {
     return {
+      limit: 15,
+      page: 1,
+      count:0,
       activeIndex: 'songs',
       songList:{},
       playList:{},
-      mvList:{},
-      count:0
+      mvList:{}
     };
   },
   methods: {
@@ -103,10 +114,8 @@ export default {
     },
     toMv(id){
       this.$router.push('/mv?mvid='+id)
-    }
-  },
-  watch: {
-    activeIndex(){
+    },
+    searchResult(){
       let type=1;
       let limit=10;
       switch (this.activeIndex) {
@@ -129,23 +138,34 @@ export default {
         params:{
           keywords:this.$route.query.keywords,
           type,
-          limit
+          limit,
+          offset: (this.page - 1) * limit
         }
       }).then(res=>{
         if(type==1){
-          console.log(res.data)
           this.songList=res.data.result.songs;
           this.count=res.data.result.songCount
         }else if(type==1000){
           this.playList=res.data.result.playlists;
           this.count=res.data.result.playlistCount;
         }else{
-          console.log(res.data)
           this.mvList=res.data.result.mvs;
           this.count=res.data.result.mvCount;
         }
-        
       })
+    },
+    handleCurrentChange(val) {
+      this.page = val;
+      this.searchResult();
+    },
+  },
+  watch: {
+    activeIndex(){
+      this.page=1;
+      this.searchResult();
+    },
+    '$route.query.keywords'(){
+      this.searchResult();
     }
   },
   created(){
@@ -155,7 +175,7 @@ export default {
       params:{
         keywords:this.$route.query.keywords,
         type:1,
-        limit:10
+        limit:15
       }
     }).then(res=>{
       console.log(res.data)

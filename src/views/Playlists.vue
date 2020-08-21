@@ -38,7 +38,7 @@
       <!-- tab的内容区域 -->
       <div class="tab-content">
         <div class="items">
-          <div class="item" v-for="(item,index) in allmusicList" :key="index">
+          <div class="item" @click="toPlayList(item.id)" v-for="(item,index) in allmusicList" :key="index">
             <div class="img-wrap">
               <div class="num-wrap">
                 播放量:
@@ -104,6 +104,9 @@ export default {
       }).then(res=>{
         this.musicList=res.data.playlists[0]
       })
+    },
+    toPlayList(id) {
+      this.$router.push(`/playlist?listid=${id}`);
     },
     listData(){
       axios({

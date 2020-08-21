@@ -81,7 +81,7 @@
         layout="prev, pager, next"
         :total="total"
         :current-page="page"
-        :page-size="5"
+        :page-size="10"
         :limit="limit"
       >
       </el-pagination>
@@ -90,7 +90,7 @@
       <h3 class="title">相关推荐</h3>
       <div class="mvs">
         <div class="items">
-          <div class="item" v-for="(item,index) in urlall" :key="index">
+          <div class="item" @click="toMV(item.id)" v-for="(item,index) in urlall" :key="index">
             <div class="img-wrap">
               <img :src="item.cover" alt="" />
               <span class="iconfont icon-play"></span>
@@ -129,67 +129,84 @@ export default {
       icon:'',
       hotComments:[],
       hotCount:0,
-      comments:{},
-      user:{}
+      comments:{}
     };
   },
   created() {
-    axios({
-      url:'https://autumnfish.cn/mv/url',
-      method:'get',
-      params:{
-        id:this.$route.query.mvid
-      }
-    }).then(res=>{
-      this.url=res.data.data.url
-    }),
-    axios({
-      url:'https://autumnfish.cn/simi/mv',
-      method:'get',
-      params:{
-        mvid:this.$route.query.mvid
-      }
-    }).then(res=>{
-      this.urlall=res.data.mvs
-    }),
-    axios({
-      url:'https://autumnfish.cn/mv/detail',
-      method:'get',
-      params:{
-        mvid:this.$route.query.mvid
-      }
-    }).then(res=>{
-      this.mvInfo=res.data.data;
+    // 获取mv信息
+    this.getInfo();
+  },
+  methods: {
+    handleCurrentChange(val) {
+      this.page = val;
+      this.getComments();
+    },
+    // 获取评论
+    getComments(){
       axios({
-        url:'https://autumnfish.cn/artists',
-        method:"get",
+        url:'https://autumnfish.cn/comment/mv',
+        method:'get',
         params:{
-          id:res.data.data.artistId
+          id:this.$route.query.mvid,
+          limit:10,
+          offset:(this.page-1)*10
         }
       }).then(res=>{
-        this.icon=res.data.artist.picUrl
-      })
-    }),
-    axios({
-      url:'https://autumnfish.cn/comment/mv',
-      method:'get',
-      params:{
-        id:this.$route.query.mvid,
-        limit:10,
-        offset:0
-      }
-    }).then(res=>{
-      console.log(res.data)
-      if (res.data.hotComments) {
+        if (res.data.hotComments) {
           this.hotComments = res.data.hotComments;
         }
         this.comments = res.data.comments;
         this.total = res.data.total;
-    })
+      })
+    },
+    //获取mv
+    getInfo(){
+      axios({
+        url:'https://autumnfish.cn/mv/url',
+        method:'get',
+        params:{
+          id:this.$route.query.mvid
+        }
+      }).then(res=>{
+        this.url=res.data.data.url
+      }),
+      axios({
+        url:'https://autumnfish.cn/simi/mv',
+        method:'get',
+        params:{
+          mvid:this.$route.query.mvid
+        }
+      }).then(res=>{
+        this.urlall=res.data.mvs
+      }),
+      axios({
+        url:'https://autumnfish.cn/mv/detail',
+        method:'get',
+        params:{
+          mvid:this.$route.query.mvid
+        }
+      }).then(res=>{
+        this.mvInfo=res.data.data;
+        axios({
+          url:'https://autumnfish.cn/artists',
+          method:"get",
+          params:{
+            id:res.data.data.artistId
+          }
+        }).then(res=>{
+          this.icon=res.data.artist.picUrl
+        })
+      }),
+      this.getComments();
+    },
+    toMV(id) {
+      this.$router.push(`/mv?mvid=${id}`);
+    }
   },
-  methods: {
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+  watch: {
+    '$route.query.mvid'() {
+      this.page = 1;
+      this.getInfo();
     }
   }
 };

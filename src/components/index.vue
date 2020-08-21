@@ -4,19 +4,19 @@
       <ul>
         <li>
           <router-link to="/discovery">
-            <span class="iconfont icon-find-music"></span>
+            <span class="iconfont icon-netease"></span>
             发现音乐
           </router-link>
         </li>
         <li>
           <router-link to="/playlists">
-            <span class="iconfont icon-music-list"></span>
+            <span class="iconfont icon-gedan"></span>
             推荐歌单
           </router-link>
         </li>
         <li>
           <router-link to="/songs">
-            <span class="iconfont icon-music"></span>
+            <span class="iconfont icon-yinyue"></span>
             最新音乐
           </router-link>
         </li>

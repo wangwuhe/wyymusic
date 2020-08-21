@@ -35,7 +35,7 @@ export default {
         this.$router.push(`/result?keywords=${this.query}`)
       }
     }
-  },
+  }
 };
 </script>
 
