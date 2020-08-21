@@ -84,7 +84,6 @@ export default {
     }).then(res=>{
       this.banners=res.data.banners
     }),
-
     axios({
       url:'https://autumnfish.cn/personalized',
       method:'get',
@@ -93,14 +92,13 @@ export default {
       }
     }).then(res=>{
       this.personalized=res.data.result
-    })
-
+    }),
     axios({
       url:'https://autumnfish.cn/personalized/newsong',
       method:'get'
     }).then(res=>{
       this.newsong=res.data.result
-    })
+    }),
 
     axios({
       url:'https://autumnfish.cn/personalized/mv',
