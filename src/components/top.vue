@@ -3,12 +3,12 @@
     <div class="left-box">
       <div class="icon-wrapper">
         <span @click="$router.replace('/')" class="iconfont icon-home"></span>
-        <span class="iconfont icon-sami-select"></span>
-        <span class="iconfont icon-full-screen"></span>
+        <span class="iconfont icon-icon_select icon-sami-select"></span>
+        <span class="iconfont icon-iconscreen icon-full-screen"></span>
       </div>
       <div class="history-wrapper">
-        <span @click="$router.go(-1)" class="iconfont icon-arrow-lift"></span>
-        <span @click="$router.go(1)" class="iconfont icon-arrow-right"></span>
+        <span @click="$router.go(-1)" class="iconfont icon-dajiantou"></span>
+        <span @click="$router.go(1)" class="iconfont icon-xiaojiantou"></span>
       </div>
     </div>
     <div class="right-box">
