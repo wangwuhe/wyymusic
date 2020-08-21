@@ -1,20 +1,20 @@
 <template>
   <div class="playlists-container">
     <!-- 同步 -->
-    <div class="top-card">
+    <div class="top-card" v-if="listName">
       <div class="icon-wrap">
-        <img :src="musicList.coverImgUrl" alt="" />
+        <img :src="listCover" alt="" />
       </div>
       <div class="content-wrap">
         <div class="tag">精品歌单</div>
         <div class="title">
-          {{musicList.name}}
+          {{listName}}
         </div>
         <div class="info">
-          {{musicList.description}}
+          {{listDesc}}
         </div>
       </div>
-      <img :src="musicList.coverImgUrl" alt="" class="bg" />
+      <img :src="listCover" alt="" class="bg" />
       <div class="bg-mask"></div>
     </div>
     <div class="tab-container">
@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { highquality, topList } from '@/api/playlists';
 export default {
   name: 'recommend',
   data() {
@@ -75,7 +75,10 @@ export default {
       total:0,
       // 页码
       page:1,
-      musicList:{},
+      // musicList:{},
+      listName:'',
+      listDesc:'',
+      listCover:'',
       allmusicList:{},
       tag:'全部'
     };
@@ -94,30 +97,28 @@ export default {
   },
   methods: {
     topData(){
-      axios({
-        url:'https://autumnfish.cn/top/playlist/highquality',
-        method:'get',
-        params:{
-          limit:1,
-          cat:this.tag
+      highquality({ 
+        limit:1,
+        cat:this.tag
+      }).then(res => {
+        if (res.data.playlists.length != 0) {
+          this.listName = res.data.playlists[0].name;
+          this.listDesc = res.data.playlists[0].description;
+          this.listCover = res.data.playlists[0].coverImgUrl;
+        } else {
+          this.listName = '';
         }
-      }).then(res=>{
-        this.musicList=res.data.playlists[0]
       })
     },
     toPlayList(id) {
       this.$router.push(`/playlist?listid=${id}`);
     },
     listData(){
-      axios({
-        url:'https://autumnfish.cn/top/playlist/',
-        method:'get',
-        params:{
-          limit:10,
-          offset:(this.page-1)*10,
-          cat:this.tag
-        }
-      }).then(res=>{
+      topList({
+        limit:10,
+        offset:(this.page-1)*10,
+        cat:this.tag
+      }).then(res => {
         this.total=res.data.total
         this.allmusicList=res.data.playlists
       })

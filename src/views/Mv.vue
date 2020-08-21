@@ -112,7 +112,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { mvUrl, simiMV, mvComments, mvDetail, artistInfo } from '@/api/mv';
 export default {
   name: 'mv',
   data() {
@@ -143,15 +143,7 @@ export default {
     },
     // 获取评论
     getComments(){
-      axios({
-        url:'https://autumnfish.cn/comment/mv',
-        method:'get',
-        params:{
-          id:this.$route.query.mvid,
-          limit:10,
-          offset:(this.page-1)*10
-        }
-      }).then(res=>{
+      mvComments({id:this.$route.query.mvid,limit:10, offset: (this.page - 1) * 10}).then(res => {
         if (res.data.hotComments) {
           this.hotComments = res.data.hotComments;
         }
@@ -161,39 +153,17 @@ export default {
     },
     //获取mv
     getInfo(){
-      axios({
-        url:'https://autumnfish.cn/mv/url',
-        method:'get',
-        params:{
-          id:this.$route.query.mvid
-        }
-      }).then(res=>{
+      mvUrl({ id:this.$route.query.mvid }).then(res => {
         this.url=res.data.data.url
       }),
-      axios({
-        url:'https://autumnfish.cn/simi/mv',
-        method:'get',
-        params:{
-          mvid:this.$route.query.mvid
-        }
-      }).then(res=>{
+      simiMV({ mvid:this.$route.query.mvid}).then(res => {
         this.urlall=res.data.mvs
       }),
-      axios({
-        url:'https://autumnfish.cn/mv/detail',
-        method:'get',
-        params:{
-          mvid:this.$route.query.mvid
-        }
-      }).then(res=>{
+      mvDetail({ mvid:this.$route.query.mvid}).then(res => {
         this.mvInfo=res.data.data;
-        axios({
-          url:'https://autumnfish.cn/artists',
-          method:"get",
-          params:{
-            id:res.data.data.artistId
-          }
-        }).then(res=>{
+        artistInfo({
+          artistId: res.data.artistId
+        }).then(res => {
           this.icon=res.data.artist.picUrl
         })
       }),

@@ -44,7 +44,7 @@
             <tr class="el-table__row" v-for="(item,index) in tableData" :key="index">
               <td>{{index+1}}</td>
               <td>
-                <div class="img-wrap">
+                <div class="img-wrap" @click="playMusic(item.id)">
                   <img :src="item.al.picUrl" alt="" />
                   <span class="iconfont icon-play"></span>
                 </div>
@@ -53,7 +53,7 @@
                 <div class="song-wrap">
                   <div class="name-wrap">
                     <span>{{item.name}}</span>
-                    <span class="iconfont icon-mv"></span>
+                    <span v-if="item.mv != 0" @click="toMV(item.mv)" class="iconfont icon-mv"></span>
                   </div>
                   <span>{{item.subTitle}}</span>
                 </div>
@@ -126,7 +126,8 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { playlistDetail, listComments, hotComments } from '@/api/playlist';
+import { songUrl } from '@/api/discovery';
 export default {
   name: 'playlist',
   data() {
@@ -145,39 +146,27 @@ export default {
     };
   },
   created() {
-    axios({
-      url:'https://autumnfish.cn/playlist/detail',
-      method:'get',
-      params:{
-        id:this.$route.query.listid
-      }
-    }).then(res=>{
+    playlistDetail({
+      id:this.$route.query.listid
+    }).then(res => {
       this.tableData=res.data.playlist.tracks;
       this.creator=res.data.playlist.creator;
       this.playlist=res.data.playlist;
     }),
 
-    axios({
-      url:'https://autumnfish.cn/comment/hot',
-      method:'get',
-      params:{
-        id:this.$route.query.listid,
-        type:2
-      }
-    }).then(res=>{
+    hotComments({
+      id:this.$route.query.listid,
+      type:2
+    }).then(res => {
       this.hotComments=res.data.hotComments;
       this.hotCount=res.data.total;
     }),
 
-    axios({
-      url:'https://autumnfish.cn/comment/playlist',
-      method:'get',
-      params:{
+    listComments({
         id:this.$route.query.listid,
         limit:10,
         offset:0
-      }
-    }).then(res=>{
+      }).then(res => {
       this.total=res.data.total;
       this.Comments=res.data.comments;
     })
@@ -185,17 +174,24 @@ export default {
   methods: {
     handleCurrentChange(val) {
       this.page=val;
-      axios({
-        url:'https://autumnfish.cn/comment/playlist',
-        method:'get',
-        params:{
-          id:this.$route.query.listid,
-          limit:10,
-          offset:(this.page-1)*10
-        }
-      }).then(res=>{
+      listComments({
+        id:this.$route.query.listid,
+        limit:10,
+        offset:(this.page-1)*10
+      }).then(res => {
         this.total=res.data.total;
         this.Comments=res.data.comments;
+      })
+    },
+    toMV(id){
+      this.$router.push(`/mv?mvid=${id}`)
+    },
+    playMusic(id){
+      songUrl({
+        id:id
+      }).then(res=>{
+        let musicurl=res.data.data[0].url;
+        this.$parent.url=musicurl;
       })
     }
   }

@@ -45,7 +45,8 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { topSongs } from '@/api/songs';
+import { songUrl } from '@/api/discovery';
 export default {
   name: 'songs',
   data() {
@@ -61,24 +62,16 @@ export default {
   },
   methods: {
     getSongs(){
-      axios({
-        url:'https://autumnfish.cn/top/song',
-        method:'get',
-        params:{
-          type:this.tag
-        }
-      }).then(res=>{
+      topSongs({
+        type:this.tag
+      }).then(res => {
         this.songs=res.data.data
       })
     },
     playMusic(id){
-      axios({
-        url:'https://autumnfish.cn/song/url',
-        method:'get',
-        params:{
-          id
-        }
-      }).then(res=>{
+      songUrl({
+        id: id
+      }).then(res => {
         let url=res.data.data[0].url;
         this.$parent.url=url;
       })

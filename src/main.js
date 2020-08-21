@@ -6,7 +6,7 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import moment from 'moment';
 
-import './assets/index.css'
+import './assets/base.scss'
 import './assets/fonts/iconfont.css'
 
 //处理时长

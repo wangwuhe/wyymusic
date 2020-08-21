@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { allMvs } from '@/api/mvs';
 export default {
   name: 'mvs',
   data() {
@@ -129,17 +129,13 @@ export default {
   },
   methods: {
     getList(){
-      axios({
-        url:'https://autumnfish.cn/mv/all',
-        method:'get',
-        params:{
-          area:this.area,
-          type:this.type,
-          order:this.order,
-          limit:this.limit,
-          offset:(this.page-1)*this.limit
-        }
-      }).then(res=>{
+      allMvs({
+        area:this.area,
+        type:this.type,
+        order:this.order,
+        limit:this.limit,
+        offset:(this.page-1)*this.limit
+      }).then(res => {
         this.list=res.data.data;
         if(res.data.count){
           this.total=res.data.count

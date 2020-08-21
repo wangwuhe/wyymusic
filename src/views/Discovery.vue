@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { banner, songlist, newsong,mv,songUrl } from '@/api/discovery';
 export default {
   name: 'discovery',
   data() {
@@ -78,43 +78,24 @@ export default {
     }
   },
   created(){
-    axios({
-      url:'https://autumnfish.cn/banner',
-      method:'get'
-    }).then(res=>{
+    banner().then(res => {
       this.banners=res.data.banners
     }),
-    axios({
-      url:'https://autumnfish.cn/personalized',
-      method:'get',
-      params:{
-        limit:10
-      }
-    }).then(res=>{
+    songlist().then(res => {
       this.personalized=res.data.result
     }),
-    axios({
-      url:'https://autumnfish.cn/personalized/newsong',
-      method:'get'
-    }).then(res=>{
+    newsong().then(res => {
       this.newsong=res.data.result
     }),
 
-    axios({
-      url:'https://autumnfish.cn/personalized/mv',
-      method:'get'
-    }).then(res=>{
+    mv().then(res=>{
       this.mv=res.data.result
     })
   },
   methods: {
     playMusic(id){
-      axios({
-        url:'https://autumnfish.cn/song/url',
-        method:'get',
-        params:{
-          id
-        }
+      songUrl({
+        id:id
       }).then(res=>{
         let musicurl=res.data.data[0].url;
         this.$parent.url=musicurl;

@@ -82,7 +82,8 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { search } from '@/api/result';
+import { songUrl } from '@/api/discovery';
 export default {
   name: 'result',
   data() {
@@ -98,13 +99,9 @@ export default {
   },
   methods: {
     Playsongs(id){
-      axios({
-        url:'https://autumnfish.cn/song/url',
-        method:'get',
-        params:{
-          id
-        }
-      }).then(res=>{
+      songUrl({
+        id
+      }).then(res => {
         let url=res.data.data[0].url;
         this.$parent.url=url;
       })
@@ -132,16 +129,12 @@ export default {
           limit=12
           break;
       }
-      axios({
-        url:'https://autumnfish.cn/search',
-        method:'get',
-        params:{
-          keywords:this.$route.query.keywords,
-          type,
-          limit,
-          offset: (this.page - 1) * limit
-        }
-      }).then(res=>{
+      search({
+        keywords:this.$route.query.keywords,
+        type,
+        limit,
+        offset: (this.page - 1) * limit
+      }).then(res => {
         if(type==1){
           this.songList=res.data.result.songs;
           this.count=res.data.result.songCount
@@ -169,14 +162,11 @@ export default {
     }
   },
   created(){
-    axios({
-      url:'https://autumnfish.cn/search',
-      method:'get',
-      params:{
+    search({
         keywords:this.$route.query.keywords,
         type:1,
-        limit:15
-      }
+        limit:15,
+        offset:1
     }).then(res=>{
       console.log(res.data)
       this.songList=res.data.result.songs;
